@@ -8,11 +8,11 @@ const PersonList = ({ persons, onPersonDelete, setNotification }) => {
 
   const deletePerson = (person) => {
     const result = window.confirm(
-      `Are you sure you want to delete ${person.name} from the phonebook?`
+      `Are you sure you want tolöllö delete ${person.name} from the phonebook?`
     );
 
     if (result === true) {
-      const personsWithoutDeletedPerson = persons.filter((p) => p != person);
+      const personsWithoutDeletedPerson = persons.filter((p) => p !== person);
 
       personService
         .remove(person.id)
@@ -26,6 +26,13 @@ const PersonList = ({ persons, onPersonDelete, setNotification }) => {
             setNotification(null);
           }, 5000);
         });
+      setNotification({
+        message: `${person.name} was deleted from the phonebook`,
+        type: "notification",
+      });
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
     }
   };
 

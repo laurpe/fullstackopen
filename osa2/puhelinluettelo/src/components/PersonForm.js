@@ -36,18 +36,30 @@ const PersonForm = ({
         updateNumber(personObject);
       }
     } else {
-      personService.create(personObject).then((response) => {
-        onPersonCreate(response.data);
-      });
+      personService
+        .create(personObject)
+        .then((response) => {
+          onPersonCreate(response.data);
+          setNotification({
+            message: `${newName} was added to the phonebook`,
+            type: "notification",
+          });
 
-      setNotification({
-        message: `${newName} was added to the phonebook`,
-        type: "notification",
-      });
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          setNotification({
+            message: error.response.data.error,
+            type: "error",
+          });
 
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        });
     }
   };
 
@@ -79,6 +91,9 @@ const PersonForm = ({
       message: `Phone number of ${newName} was updated`,
       type: "notification",
     });
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
   };
 
   return (
