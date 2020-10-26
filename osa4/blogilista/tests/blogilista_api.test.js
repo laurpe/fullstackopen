@@ -50,6 +50,15 @@ test("a specific blog is within the returned blogs", async () => {
   expect(titles).toContain("Go To Statement Considered Harmful");
 });
 
+test("id field is there and is in form of id not _id", async () => {
+  const response = await api.get("/api/blogs");
+
+  const ids = response.body.map((r) => r.id);
+
+  expect(response.body[0]).toHaveProperty("id");
+  expect(ids).toBeDefined();
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
