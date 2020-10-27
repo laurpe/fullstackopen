@@ -58,12 +58,29 @@ test("when blog is added number of blogs is increased by one and blogs contain n
     .expect(200)
     .expect("Content-Type", /application\/json/);
 
-  const response = await api.get("/api/blogs");
+  const blogsAtEnd = await helper.blogsInDb();
+  const titles = blogsAtEnd.map((r) => r.title);
 
-  const titles = response.body.map((r) => r.title);
-
-  expect(response.body.length).toBe(helper.initialBlogs.length + 1);
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
   expect(titles).toContain("testiblogi");
+});
+
+test("if blog object doesn't have likes property, set it to 0", async () => {
+  const newBlog = {
+    title: "likeless blog",
+    author: "author",
+    url: "nolikes.com",
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  const blogsAtEnd = await helper.blogsInDb();
+
+  expect(blogsAtEnd[2]).toHaveProperty("likes");
 });
 
 afterAll(() => {
