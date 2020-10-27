@@ -44,38 +44,26 @@ test("blogs have id field and it is in form of id not _id", async () => {
   expect(ids).toBeDefined();
 });
 
-describe("when new blog is posted", () => {
-  test("number of blogs increases by one", async () => {
-    const newBlog = new Blog({
-      title: "testiblogi",
-      author: "testaaja",
-      url: "www.testi.fi",
-      likes: "5",
-    });
+test("when blog is added number of blogs is increased by one and blogs contain new title", async () => {
+  const newBlog = {
+    title: "testiblogi",
+    author: "testaaja",
+    url: "www.testi.fi",
+    likes: "5",
+  };
 
-    await newBlog.save();
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
 
-    const response = await api.get("/api/blogs");
+  const response = await api.get("/api/blogs");
 
-    expect(response.body.length).toBe(helper.initialBlogs.length + 1);
-  });
+  const titles = response.body.map((r) => r.title);
 
-  test("blogs contain new blog", async () => {
-    const newBlog = new Blog({
-      title: "testiblogi",
-      author: "testaaja",
-      url: "www.testi.fi",
-      likes: "5",
-    });
-
-    await newBlog.save();
-
-    const response = await api.get("/api/blogs");
-
-    const titles = response.body.map((r) => r.title);
-
-    expect(titles).toContain("testiblogi");
-  });
+  expect(response.body.length).toBe(helper.initialBlogs.length + 1);
+  expect(titles).toContain("testiblogi");
 });
 
 afterAll(() => {
