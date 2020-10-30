@@ -115,6 +115,27 @@ test("blog is deleted", async () => {
   expect(titles).not.toContain(blogToDelete.title);
 });
 
+test("blog likes are updated", async () => {
+  const blogsAtStart = await helper.blogsInDb();
+
+  const blogToUpdate = blogsAtStart[0];
+
+  const updatedBlog = {
+    title: blogsAtStart[0].title,
+    author: blogsAtStart[0].author,
+    url: blogsAtStart[0].url,
+    likes: 500,
+  };
+
+  await api.put(`/api/blogs/${blogToUpdate.id}`).send(updatedBlog).expect(200);
+
+  const blogsAtEnd = await helper.blogsInDb();
+
+  const titles = blogsAtEnd.map((r) => r.title);
+
+  expect(titles).toContain(updatedBlog.title);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
