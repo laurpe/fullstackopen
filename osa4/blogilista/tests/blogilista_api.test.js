@@ -150,6 +150,142 @@ describe("when there are initially some blogs saved", () => {
   });
 });
 
+describe("when there is initially one user in database", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash("salasana", 10);
+    const user = new User({
+      username: "root",
+      name: "root",
+      passwordHash,
+    });
+
+    await user.save();
+  });
+
+  test("creation succeeds with a fresh username", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "tiina",
+      name: "Tiina Tiili",
+      password: "salainen",
+    };
+
+    await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(200)
+      .expect("Content-type", /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
+
+    const usernames = usersAtEnd.map((u) => u.username);
+    expect(usernames).toContain(newUser.username);
+  });
+  test("creation fails with proper status code and message if username is already taken", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "root",
+      name: "superuser",
+      password: "salainen",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain("`username` to be unique");
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+});
+
+describe("when adding new user to database", () => {
+  test("username is given", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      name: "no username",
+      password: "salasana",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain("`username` is required");
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+
+  test("username is min 3 characters long", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "u",
+      name: "username",
+      password: "salasana"
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  })
+
+  test("password is given", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "no password",
+      name: "still no password"
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+
+  test("password is min 3 characters long", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "username",
+      name: "name",
+      password: "sa"
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  })
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
