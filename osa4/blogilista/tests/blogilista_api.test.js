@@ -9,13 +9,27 @@ const api = supertest(app);
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
+
+
 describe("when there are initially some blogs saved", () => {
   beforeEach(async () => {
     await Blog.deleteMany({});
+
     let blogObject = new Blog(helper.initialBlogs[0]);
     await blogObject.save();
     blogObject = new Blog(helper.initialBlogs[1]);
     await blogObject.save();
+
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash("salasana", 10);
+    const user = new User({
+      username: "root",
+      name: "root",
+      passwordHash,
+    });
+
+    await user.save();
   });
 
   test("blogs are returned as json", async () => {
@@ -50,13 +64,17 @@ describe("when there are initially some blogs saved", () => {
 
   describe("when a new blog is added", () => {
     test("the number of blogs is increased by one and blogs contain new title", async () => {
+      const users = await helper.usersInDb()
+
       const newBlog = {
         title: "testiblogi",
         author: "testaaja",
         url: "www.testi.fi",
         likes: "5",
+        userId: users[0].id
       };
 
+      
       await api
         .post("/api/blogs")
         .send(newBlog)
@@ -71,10 +89,13 @@ describe("when there are initially some blogs saved", () => {
     });
 
     test("if likes property is not given, likes are set to 0", async () => {
+      const users = await helper.usersInDb()
+
       const newBlog = {
         title: "likeless blog",
         author: "author",
         url: "nolikes.com",
+        userId: users[0].id
       };
 
       await api
@@ -151,25 +172,13 @@ describe("when there are initially some blogs saved", () => {
 });
 
 describe("when there is initially one user in database", () => {
-  beforeEach(async () => {
-    await User.deleteMany({});
-
-    const passwordHash = await bcrypt.hash("salasana", 10);
-    const user = new User({
-      username: "root",
-      name: "root",
-      passwordHash,
-    });
-
-    await user.save();
-  });
 
   test("creation succeeds with a fresh username", async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
       username: "tiina",
-      name: "Tiina Tiili",
+      name: "tiina",
       password: "salainen",
     };
 
