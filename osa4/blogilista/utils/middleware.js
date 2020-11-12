@@ -9,7 +9,7 @@ const requestLogger = (request, response, next) => {
 };
 
 const errorHandler = (error, request, response, next) => {
-  
+
   if (error.name === "ValidationError" || error.name === "Error") {
     return response.status(400).json({ error: error.message });
   }
@@ -23,4 +23,17 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 };
 
-module.exports = { requestLogger, errorHandler };
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get("authorization")
+  if (authorization && authorization.toLowerCase().startsWith("bearer")) {
+    request.token = authorization.substring(7)
+  }
+
+  if (request.token === undefined || request.token === null) {
+    response.status(401).json({ error: "no access" })
+  }
+  next()
+}
+
+
+module.exports = { requestLogger, errorHandler, tokenExtractor };
