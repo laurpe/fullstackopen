@@ -98,3 +98,17 @@ describe("favorite blog", () => {
     expect(result).toEqual(manyBlogs[2])
   })
 })
+
+describe("author with most blogs", () => {
+  test("is shown correctly with the amount of blogs", () => {
+    const result = listHelper.mostBlogs(manyBlogs)
+    expect(result).toMatchObject({ author: "Robert C. Martin", blogs: 3 })
+  })
+})
+
+describe("author with most likes", () => {
+  test("is shown correctly with the amount of likes", () => {
+    const result = listHelper.mostLikes(manyBlogs)
+    expect(result).toMatchObject({ author: "Edsger W. Dijkstra", likes: 17 })
+  })
+})
