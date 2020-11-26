@@ -29,9 +29,6 @@ const tokenExtractor = (request, response, next) => {
     request.token = authorization.substring(7)
   }
 
-  // if (request.token === undefined || request.token === null) {
-  //   response.status(401).json({ error: "no access" })
-  // }
   next()
 }
 
