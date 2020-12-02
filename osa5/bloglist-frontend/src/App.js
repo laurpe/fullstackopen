@@ -3,6 +3,39 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const CreateBlogForm = ({ blogs, setBlogs }) => {
+  const blogObject = { title: '', author: '', url: '' }
+  const [newBlog, setNewBlog] = useState(blogObject)
+
+  const addNewBlog = async (event) => {
+    event.preventDefault()
+    const returnedBlog = await blogService.create(newBlog)
+    setBlogs(blogs.concat(returnedBlog))
+    setNewBlog(blogObject)
+  }
+
+  return (
+    <div>
+      <h2>create new blog</h2>
+      <form onSubmit={addNewBlog}>
+        <div>
+          title:
+        <input type="text" value={newBlog.title} name="Title" onChange={(event) => setNewBlog({ ...newBlog, title: event.target.value })} />
+        </div>
+        <div>
+          author:
+        <input type="text" value={newBlog.author} name="Author" onChange={(event) => setNewBlog({ ...newBlog, author: event.target.value })} />
+        </div>
+        <div>
+          url:
+        <input type="text" value={newBlog.url} name="Url" onChange={(event) => setNewBlog({ ...newBlog, url: event.target.value })} />
+        </div>
+        <button type="submit">add blog</button>
+      </form>
+    </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
@@ -20,6 +53,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -33,6 +67,8 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
+
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -68,14 +104,12 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-
+      <CreateBlogForm blogs={blogs} setBlogs={setBlogs} />
       <p>{user.name} logged in <button type="button" onClick={handleLogout}>logout</button></p>
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
-
-
     </div>
   )
 }
