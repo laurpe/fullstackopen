@@ -33,12 +33,21 @@ const App = () => {
   const createBlog = async (blogObject) => {
     createBlogFormRef.current.toggleVisibility()
     const returnedBlog = await blogService.create(blogObject)
+    console.log(returnedBlog)
     setBlogs(blogs.concat(returnedBlog))
   }
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
+  }
+
+  const updateBlog = async (blog) => {
+    await blogService.update(blog.id, blog)
+    const index = blogs.findIndex((oldBlog) => oldBlog.id === blog.id)
+    const updatedBlogs = [...blogs]
+    updatedBlogs[index] = blog
+    setBlogs(updatedBlogs)
   }
 
 
@@ -63,7 +72,7 @@ const App = () => {
           </Togglable>
 
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} user={user} />
           )}
         </div>
       }

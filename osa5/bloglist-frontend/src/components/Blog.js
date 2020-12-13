@@ -1,10 +1,22 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateBlog, user }) => {
   const [blogDetails, setBlogDetails] = useState(false)
 
   const hideDetails = { display: blogDetails ? 'none' : '' }
   const showDetails = { display: blogDetails ? '' : 'none' }
+
+  const handleLike = (blog) => {
+    const newBlog = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1,
+      user: blog.user,
+      id: blog.id
+    }
+    updateBlog(newBlog)
+  }
 
   const blogStyle = {
     paddingTop: 10,
@@ -15,6 +27,7 @@ const Blog = ({ blog }) => {
     marginTop: 2,
   }
 
+
   return (
     <div style={blogStyle}>
       <div style={hideDetails}>
@@ -23,8 +36,8 @@ const Blog = ({ blog }) => {
       <div style={showDetails}>
         {blog.title} by {blog.author} <button onClick={() => setBlogDetails(false)}>hide</button> <br />
         {blog.url} <br />
-        likes: {blog.likes} <button>like</button><br />
-        {blog.user.name}
+        likes: {blog.likes} <button onClick={() => handleLike(blog)}>like</button><br />
+        added by: {blog.user.name ?? user.name}
       </div>
     </div>
   )
