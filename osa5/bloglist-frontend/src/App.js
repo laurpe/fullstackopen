@@ -50,6 +50,16 @@ const App = () => {
     setBlogs(updatedBlogs)
   }
 
+  const removeBlog = async (blog) => {
+    const index = blogs.findIndex((blogToDelete) => blogToDelete.id === blog.id)
+    const blogsCopy = [...blogs]
+    blogsCopy.splice(index, 1)
+
+    await blogService.remove(blog.id)
+
+    setBlogs(blogsCopy)
+  }
+
 
   return (
 
@@ -72,7 +82,7 @@ const App = () => {
           </Togglable>
 
           {blogs.sort((a, b) => (b.likes - a.likes)).map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} user={user} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} user={user} removeBlog={removeBlog} />
           )}
         </div>
       }

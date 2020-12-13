@@ -1,10 +1,19 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, updateBlog, user }) => {
+const Blog = ({ blog, updateBlog, user, removeBlog }) => {
   const [blogDetails, setBlogDetails] = useState(false)
 
   const hideDetails = { display: blogDetails ? 'none' : '' }
   const showDetails = { display: blogDetails ? '' : 'none' }
+
+  let showRemoveButton = false
+
+  if (blog.user.name === user.name) {
+    showRemoveButton = true
+  }
+
+  const showTheButton = { display: showRemoveButton ? '' : 'none' }
+
 
   const handleLike = (blog) => {
     const newBlog = {
@@ -16,6 +25,12 @@ const Blog = ({ blog, updateBlog, user }) => {
       id: blog.id
     }
     updateBlog(newBlog)
+  }
+
+  const handleRemove = (blog) => {
+    if (window.confirm(`Do you want to remove ${blog.title} by ${blog.author}?`)) {
+      removeBlog(blog)
+    }
   }
 
   const blogStyle = {
@@ -37,7 +52,8 @@ const Blog = ({ blog, updateBlog, user }) => {
         {blog.title} by {blog.author} <button onClick={() => setBlogDetails(false)}>hide</button> <br />
         {blog.url} <br />
         likes: {blog.likes} <button onClick={() => handleLike(blog)}>like</button><br />
-        added by: {blog.user.name ?? user.name}
+        added by: {blog.user.name ?? user.name} <br />
+        <div style={showTheButton}><button onClick={() => handleRemove(blog)}>remove</button></div>
       </div>
     </div>
   )
