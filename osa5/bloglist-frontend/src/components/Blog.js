@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+
 const Blog = ({ blog, updateBlog, user, removeBlog }) => {
   const [blogDetails, setBlogDetails] = useState(false)
 
@@ -52,7 +53,7 @@ const Blog = ({ blog, updateBlog, user, removeBlog }) => {
         {blog.title} by {blog.author} <button onClick={() => setBlogDetails(false)}>hide</button> <br />
         {blog.url} <br />
         likes: {blog.likes} <button onClick={() => handleLike(blog)}>like</button><br />
-        added by: {blog.user.name ?? user.name} <br />
+        added by: {blog.user.name ? blog.user.name : user.name} <br />
         <div style={showTheButton}><button onClick={() => handleRemove(blog)}>remove</button></div>
       </div>
     </div>
