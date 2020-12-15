@@ -1,9 +1,15 @@
 import React, { useState } from 'react'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
 
 const LoginForm = ({ setUser, setNotification }) => {
+    LoginForm.propTypes = {
+        setUser: PropTypes.func.isRequired,
+        setNotification: PropTypes.func.isRequired
+    }
+
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
