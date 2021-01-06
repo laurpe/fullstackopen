@@ -35,7 +35,7 @@ const Blog = ({ blog, updateBlog, user, removeBlog }) => {
     return (
         <div style={blogStyle}>
             {blogDetails === false && (
-                <div>
+                <div className='bloglist'>
                     {blog.title} by {blog.author} <button onClick={() => setBlogDetails(true)}>view</button>
                 </div>
             )}

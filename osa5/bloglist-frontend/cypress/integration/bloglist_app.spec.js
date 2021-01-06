@@ -33,4 +33,24 @@ describe('Blog app', function() {
             cy.get('.error').should('have.css', 'background-color', 'rgb(206, 57, 77)')
         })
     })
+
+    describe('When logged in', function() {
+        beforeEach(function() {
+            cy.get('#username').type('testeri')
+            cy.get('#password').type('salasana')
+            cy.get('#login-button').click()
+        })
+
+        it('A blog can be created', function() {
+            cy.contains('new blog').click()
+            cy.get('#title').type('testiblogi')
+            cy.get('#author').type('Testi Testaaja')
+            cy.get('#url').type('www.testiblogi.fi')
+            cy.contains('add blog').click()
+
+            cy.get('.notification').contains('a new blog testiblogi by Testi Testaaja added')
+            cy.get('.notification').should('have.css', 'background-color', 'rgb(129, 206, 57)')
+            cy.get('.bloglist').contains('testiblogi by Testi Testaaja')
+        })
+    })
 })

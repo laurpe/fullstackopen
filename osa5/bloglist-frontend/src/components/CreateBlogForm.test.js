@@ -19,8 +19,6 @@ test('Form has correct info', async () => {
 
     fireEvent.click(button)
 
-    console.log(mockHandler.mock.calls)
-
     expect(mockHandler.mock.calls).toHaveLength(1)
     expect(mockHandler.mock.calls[0][0]).toStrictEqual({ title: 'testiblogi', author: 'testaaja', url: 'www.testiblogi.fi' })
 })
