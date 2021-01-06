@@ -1,3 +1,4 @@
+
 describe('Blog app', function() {
     beforeEach(function() {
         cy.request('POST', 'http://localhost:3001/api/testing/reset')
@@ -36,9 +37,7 @@ describe('Blog app', function() {
 
     describe('When logged in', function() {
         beforeEach(function() {
-            cy.get('#username').type('testeri')
-            cy.get('#password').type('salasana')
-            cy.get('#login-button').click()
+            cy.login({ username: 'testeri', password: 'salasana' })
         })
 
         it('A blog can be created', function() {
@@ -51,6 +50,19 @@ describe('Blog app', function() {
             cy.get('.notification').contains('a new blog testiblogi by Testi Testaaja added')
             cy.get('.notification').should('have.css', 'background-color', 'rgb(129, 206, 57)')
             cy.get('.bloglist').contains('testiblogi by Testi Testaaja')
+        })
+
+        describe('and multiple blogs exist', function() {
+            beforeEach(function() {
+                cy.createBlog({ title: 'ekablogi', author: 'ekakirjoittaja', url: 'www.ekablogi.fi' })
+                cy.createBlog({ title: 'tokablogi', author: 'tokakirjoittaja', url: 'www.tokablogi.fi' })
+                cy.createBlog({ title: 'kolmasblogi', author: 'kolmaskirjoittaja', url: 'www.kolmasblogi.fi' })
+            })
+
+            it.only('A blog can be liked', function() {
+                cy.contains('tokablogi').contains('view').click()
+                cy.contains('tokablogi').contains('like').click()
+            })
         })
     })
 })
