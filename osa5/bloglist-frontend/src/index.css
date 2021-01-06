@@ -1,6 +1,6 @@
 .error {
   color: white;
-  background: rgb(206, 57, 77);
+  background-color: rgb(206, 57, 77);
   font-size: 15px;
   font-weight: bold;
   font-family: Helvetica;
@@ -11,7 +11,7 @@
 
 .notification {
   color: white;
-  background: rgb(129, 206, 57);
+  background-color: rgb(129, 206, 57);
   font-size: 15px;
   font-weight: bold;
   font-family: Helvetica;
