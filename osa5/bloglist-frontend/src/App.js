@@ -73,7 +73,7 @@ const App = () => {
             }
 
             {user !== null &&
-        <div>
+        <div className='blogs'>
             <h2>blogs</h2>
             <p>{user.name} logged in <button type="button" onClick={handleLogout}>logout</button></p>
 

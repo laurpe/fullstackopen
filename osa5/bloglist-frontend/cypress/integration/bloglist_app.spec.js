@@ -1,4 +1,6 @@
 
+
+
 describe('Blog app', function() {
     beforeEach(function() {
         cy.request('POST', 'http://localhost:3001/api/testing/reset')
@@ -8,6 +10,12 @@ describe('Blog app', function() {
             password: 'salasana'
         }
         cy.request('POST', 'http://localhost:3001/api/users', user)
+        const secondUser = {
+            name: 'Toinen User',
+            username: 'toinen',
+            password: 'salainen'
+        }
+        cy.request('POST', 'http://localhost:3001/api/users', secondUser)
         cy.visit('http://localhost:3000')
     })
 
@@ -59,9 +67,24 @@ describe('Blog app', function() {
                 cy.createBlog({ title: 'kolmasblogi', author: 'kolmaskirjoittaja', url: 'www.kolmasblogi.fi' })
             })
 
-            it.only('A blog can be liked', function() {
+            it('A blog can be liked', function() {
                 cy.contains('tokablogi').contains('view').click()
                 cy.contains('tokablogi').contains('like').click()
+            })
+
+            it('A blog can be removed by its creator', function() {
+                cy.contains('ekablogi').contains('view').click()
+                cy.contains('ekablogi').contains('remove').click()
+
+                cy.get('.blogs').should('not.contain', 'ekablogi')
+            })
+
+            it('A blog can only be removed by the user that added it', function() {
+                cy.contains('logout').click()
+                cy.login({ username: 'toinen', password: 'salainen' })
+                cy.contains('tokablogi').contains('view').click()
+
+                cy.get('.blogs').should('not.contain', 'remove')
             })
         })
     })
