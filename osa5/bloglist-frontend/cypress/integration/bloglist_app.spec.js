@@ -43,7 +43,7 @@ describe('Blog app', function() {
         })
     })
 
-    describe('When logged in', function() {
+    describe.only('When logged in', function() {
         beforeEach(function() {
             cy.login({ username: 'testeri', password: 'salasana' })
         })
@@ -57,14 +57,14 @@ describe('Blog app', function() {
 
             cy.get('.notification').contains('a new blog testiblogi by Testi Testaaja added')
             cy.get('.notification').should('have.css', 'background-color', 'rgb(129, 206, 57)')
-            cy.get('.bloglist').contains('testiblogi by Testi Testaaja')
+            cy.get('.blogs').contains('testiblogi by Testi Testaaja')
         })
 
         describe('and multiple blogs exist', function() {
             beforeEach(function() {
-                cy.createBlog({ title: 'ekablogi', author: 'ekakirjoittaja', url: 'www.ekablogi.fi' })
-                cy.createBlog({ title: 'tokablogi', author: 'tokakirjoittaja', url: 'www.tokablogi.fi' })
-                cy.createBlog({ title: 'kolmasblogi', author: 'kolmaskirjoittaja', url: 'www.kolmasblogi.fi' })
+                cy.createBlog({ title: 'ekablogi', author: 'ekakirjoittaja', url: 'www.ekablogi.fi' , likes: 1 })
+                cy.createBlog({ title: 'tokablogi', author: 'tokakirjoittaja', url: 'www.tokablogi.fi', likes: 2 })
+                cy.createBlog({ title: 'kolmasblogi', author: 'kolmaskirjoittaja', url: 'www.kolmasblogi.fi', likes: 3 })
             })
 
             it('A blog can be liked', function() {
@@ -85,6 +85,18 @@ describe('Blog app', function() {
                 cy.contains('tokablogi').contains('view').click()
 
                 cy.get('.blogs').should('not.contain', 'remove')
+            })
+
+            it('blogs are sorted after likes', function() {
+
+                cy.get('.blog').each(function(blog) {
+                    cy.wrap(blog).contains('view').click()
+                })
+
+                cy.get('.blog')
+                    .first().should('contain.text', 'likes: 3')
+                    .next().should('contain.text', 'likes: 2')
+                    .next().should('contain.text', 'likes: 1')
             })
         })
     })
