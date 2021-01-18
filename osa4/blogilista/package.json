@@ -12,10 +12,10 @@
   "author": "Laura Perttilä",
   "license": "ISC",
   "devDependencies": {
-    "cross-env": "^7.0.2",
-    "eslint": "^7.13.0",
-    "jest": "^26.6.1",
-    "nodemon": "^2.0.6",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.18.0",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
     "supertest": "^5.0.0"
   },
   "dependencies": {
@@ -26,7 +26,7 @@
     "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
-    "mongoose": "^5.10.9",
+    "mongoose": "^5.11.12",
     "mongoose-unique-validator": "^2.0.3"
   },
   "jest": {
