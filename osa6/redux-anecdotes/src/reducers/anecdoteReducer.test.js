@@ -36,4 +36,24 @@ describe('anecdoteReducer', () => {
             }
         )
     })
+    test('new anecdote can be added', () => {
+        const state = initialState
+        expect(state).toHaveLength(2)
+
+        const action = {
+            type: 'ADD_ANECDOTE',
+            data: {
+                content: 'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+                id: 3,
+                votes: 0
+            }
+
+        }
+
+        deepFreeze(state)
+        const newState = anecdoteReducer(state, action)
+
+        expect(newState).toHaveLength(3)
+        expect(newState).toContainEqual(action.data)
+    })
 })
