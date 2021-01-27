@@ -42,7 +42,7 @@ describe('anecdoteReducer', () => {
 
         const action = {
             type: 'ADD_ANECDOTE',
-            data: {
+            anecdote: {
                 content: 'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
                 id: 3,
                 votes: 0
@@ -54,6 +54,6 @@ describe('anecdoteReducer', () => {
         const newState = anecdoteReducer(state, action)
 
         expect(newState).toHaveLength(3)
-        expect(newState).toContainEqual(action.data)
+        expect(newState).toContainEqual(action.anecdote)
     })
 })

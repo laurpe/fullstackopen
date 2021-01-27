@@ -5,6 +5,7 @@ import { setNotification, clearNotification } from '../reducers/notificationRedu
 
 const AnecdoteList = () => {
     const anecdotes = useSelector(state => state.anecdotes)
+    console.log(anecdotes)
     const filter = useSelector(state => state.filter)
     const dispatch = useDispatch()
 
