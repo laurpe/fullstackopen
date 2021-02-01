@@ -13,14 +13,21 @@ const notificationReducer = (state = initialState, action) => {
     }
 }
 
+var timeoutId = null
+
 export const setNotification = (notification, time) => {
     return dispatch => {
+        if (timeoutId !== null) {
+            clearTimeout(timeoutId)
+        }
         dispatch({
             type: 'SET_NOTIFICATION',
             notification
         })
-        setTimeout(() => {
+
+        timeoutId = setTimeout(() => {
             dispatch(clearNotification())
+            timeoutId = null
         }, time * 1000)
     }
 }
