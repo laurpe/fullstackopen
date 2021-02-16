@@ -1,0 +1,32 @@
+.error {
+  color: white;
+  background-color: rgb(206, 57, 77);
+  font-size: 15px;
+  font-weight: bold;
+  font-family: Helvetica;
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.notification {
+  color: white;
+  background-color: rgb(129, 206, 57);
+  font-size: 15px;
+  font-weight: bold;
+  font-family: Helvetica;
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.h2,
+form {
+  font-family: Helvetica;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
