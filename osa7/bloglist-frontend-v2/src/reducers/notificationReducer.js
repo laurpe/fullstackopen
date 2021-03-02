@@ -1,6 +1,4 @@
 const notificationReducer = (state = null, action) => {
-    console.log('state: ', state)
-    console.log('action: ', action)
     if (action.type === 'SET_NOTIFICATION') {
         return action.data
     }

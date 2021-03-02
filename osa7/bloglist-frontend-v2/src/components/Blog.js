@@ -1,26 +1,8 @@
 import React, { useState } from 'react'
 
 
-const Blog = ({ blog, updateBlog, user, removeBlog }) => {
+const Blog = ({ blog, user, handleLike, handleRemove }) => {
     const [blogDetails, setBlogDetails] = useState(false)
-
-    const handleLike = (blog) => {
-        const newBlog = {
-            title: blog.title,
-            author: blog.author,
-            url: blog.url,
-            likes: blog.likes + 1,
-            user: blog.user,
-            id: blog.id
-        }
-        updateBlog(newBlog)
-    }
-
-    const handleRemove = (blog) => {
-        if (window.confirm(`Do you want to remove ${blog.title} by ${blog.author}?`)) {
-            removeBlog(blog)
-        }
-    }
 
     const blogStyle = {
         paddingTop: 10,

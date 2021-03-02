@@ -2,11 +2,15 @@ import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
-
-
+import { Provider } from 'react-redux'
+import configureStore from 'redux-mock-store'
 
 
 test('Component renders title and author but not url and likes by default', () => {
+    const initialState = 'hello'
+    const mockStore = configureStore()
+    const store = mockStore(initialState)
+
     const propsForComponent = {
         blog: {
             title: 'testi',
@@ -31,7 +35,7 @@ test('Component renders title and author but not url and likes by default', () =
     }
 
     const component = render(
-        <Blog {...propsForComponent} />
+        <Provider store={store}><Blog {...propsForComponent} /></Provider>
     )
 
     expect(component.container).toHaveTextContent(
@@ -52,6 +56,9 @@ test('Component renders title and author but not url and likes by default', () =
 })
 
 test('Component renders url and likes when button is pressed', () => {
+    const initialState = 'hello'
+    const mockStore = configureStore()
+    const store = mockStore(initialState)
 
     const propsForComponent = {
         blog: {
@@ -77,7 +84,7 @@ test('Component renders url and likes when button is pressed', () => {
     }
 
     const component = render(
-        <Blog {...propsForComponent} />
+        <Provider store={store}><Blog {...propsForComponent} /></Provider>
     )
 
     const button = component.getByText('view')
@@ -101,7 +108,11 @@ test('Component renders url and likes when button is pressed', () => {
 })
 
 test('Like button works', async () => {
-    const mockHandler = jest.fn()
+    const initialState = 'hello'
+    const mockStore = configureStore()
+    const store = mockStore(initialState)
+
+    const mockHandler = jest.fn() //tämä pitäisi mockata niin että kierretään dispatch joka heittää errorin?
 
     const propsForComponent = {
         blog: {
@@ -113,19 +124,19 @@ test('Like button works', async () => {
             }
         },
         key: 'id',
-        updateBlog: mockHandler,
+        handleLike: mockHandler,
         user: {
             username: 'nimi',
             name: 'nimi nimi',
             password: 'salasana',
         },
-        removeBlog: () => {
+        handleRemove: () => {
             console.log('blog removed')
         }
     }
 
     const component = render(
-        <Blog {...propsForComponent} />
+        <Provider store={store}><Blog {...propsForComponent} /></Provider>
     )
 
     const viewButton = component.getByText('view')

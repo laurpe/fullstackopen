@@ -14,7 +14,7 @@ test('Form has correct info', async () => {
     const mockHandler = jest.fn()
 
     const component = render(
-        <Provider store={store}><CreateBlogForm createBlog={mockHandler} /></Provider>
+        <Provider store={store}><CreateBlogForm addNewBlog={mockHandler} /></Provider>
     )
 
     userEvent.type(component.container.querySelector('#title'), 'testiblogi')

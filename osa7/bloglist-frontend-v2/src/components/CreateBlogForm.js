@@ -1,29 +1,20 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { setNotification, clearNotification } from '../reducers/notificationReducer'
 
 
-
-const CreateBlogForm = ({ createBlog }) => {
+const CreateBlogForm = ({ addNewBlog }) => {
     const blogObject = { title: '', author: '', url: '' }
     const [newBlog, setNewBlog] = useState(blogObject)
 
-    const dispatch = useDispatch()
-
-    const addNewBlog = async (event) => {
+    const handleNewBlog = (event) => {
         event.preventDefault()
-        createBlog(newBlog)
-        dispatch(setNotification(`a new blog '${newBlog.title}' by ${newBlog.author} added`, 'notification' ))
+        addNewBlog(newBlog)
         setNewBlog(blogObject)
-        setTimeout(() => {
-            dispatch(clearNotification())
-        }, 5000)
     }
 
     return (
         <div>
             <h2>create new blog</h2>
-            <form onSubmit={addNewBlog}>
+            <form onSubmit={handleNewBlog}>
                 <div>
           title:
                     <input id='title' type="text" value={newBlog.title} name="Title" onChange={(event) => setNewBlog({ ...newBlog, title: event.target.value })} />

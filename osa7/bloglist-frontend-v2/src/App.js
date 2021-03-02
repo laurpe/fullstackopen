@@ -6,20 +6,24 @@ import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import './index.css'
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer'
+import { setNotification, clearNotification } from './reducers/notificationReducer'
+import { createBlog, likeBlog, removeBlog } from './reducers/blogReducer'
 
 
 const App = () => {
-    const [blogs, setBlogs] = useState([])
     const [user, setUser] = useState(null)
-    // const [notification, setNotification] = useState({ message: '', type: '' })
+
+    const blogs = useSelector(state => state.blogs)
 
     const createBlogFormRef = useRef()
 
+    const dispatch = useDispatch()
+
     useEffect(() => {
-        blogService.getAll().then(blogs =>
-            setBlogs(blogs)
-        )
-    }, [])
+        dispatch(initializeBlogs())
+    }, [dispatch])
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -30,33 +34,36 @@ const App = () => {
         }
     }, [])
 
-    const createBlog = async (blogObject) => {
-        createBlogFormRef.current.toggleVisibility()
-        const returnedBlog = await blogService.create(blogObject)
-        setBlogs(blogs.concat(returnedBlog))
-    }
-
     const handleLogout = () => {
         window.localStorage.removeItem('loggedBlogappUser')
         setUser(null)
     }
 
-    const updateBlog = async (blog) => {
-        await blogService.update(blog.id, blog)
-        const index = blogs.findIndex((oldBlog) => oldBlog.id === blog.id)
-        const updatedBlogs = [...blogs]
-        updatedBlogs[index] = blog
-        setBlogs(updatedBlogs)
+    const addNewBlog = async (blog) => {
+        dispatch(createBlog(blog))
+        createBlogFormRef.current.toggleVisibility()
+        dispatch(setNotification(`a new blog '${blog.title}' by ${blog.author} added`, 'notification' ))
+        setTimeout(() => {
+            dispatch(clearNotification())
+        }, 5000)
     }
 
-    const removeBlog = async (blog) => {
-        const index = blogs.findIndex((blogToDelete) => blogToDelete.id === blog.id)
-        const blogsCopy = [...blogs]
-        blogsCopy.splice(index, 1)
+    const handleLike = (blog) => {
+        const newBlog = {
+            title: blog.title,
+            author: blog.author,
+            url: blog.url,
+            likes: blog.likes + 1,
+            user: blog.user,
+            id: blog.id
+        }
+        dispatch(likeBlog(newBlog))
+    }
 
-        await blogService.remove(blog.id)
-
-        setBlogs(blogsCopy)
+    const handleRemove = (blog) => {
+        if (window.confirm(`Do you want to remove ${blog.title} by ${blog.author}?`)) {
+            dispatch(removeBlog(blog))
+        }
     }
 
     return (
@@ -74,12 +81,12 @@ const App = () => {
             <p>{user.name} logged in <button type="button" onClick={handleLogout}>logout</button></p>
 
             <Togglable buttonLabel="new blog" ref={createBlogFormRef}>
-                <CreateBlogForm createBlog={createBlog} />
+                <CreateBlogForm addNewBlog={addNewBlog}/>
             </Togglable>
 
             <ul className='bloglist'>
                 {blogs.sort((a, b) => (b.likes - a.likes)).map(blog =>
-                    <li className='blog' key={blog.id}><Blog blog={blog} updateBlog={updateBlog} user={user} removeBlog={removeBlog} /></li>
+                    <li className='blog' key={blog.id}><Blog blog={blog} user={user} handleLike={handleLike} handleRemove={handleRemove} /></li>
                 )}
             </ul>
         </div>
