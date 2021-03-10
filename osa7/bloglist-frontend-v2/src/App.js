@@ -4,12 +4,14 @@ import Togglable from './components/Togglable'
 import CreateBlogForm from './components/CreateBlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Users from './components/Users'
 import './index.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUsers } from './reducers/userReducer'
 import { setNotification, clearNotification } from './reducers/notificationReducer'
 import { createBlog, likeBlog, removeBlog } from './reducers/blogReducer'
-import { logout } from './reducers/userReducer'
+import { logout } from './reducers/loginReducer'
 import useLogin from './hooks/useLogin'
 
 
@@ -25,6 +27,10 @@ const App = () => {
 
     useEffect(() => {
         dispatch(initializeBlogs())
+    }, [dispatch])
+
+    useEffect(() => {
+        dispatch(initializeUsers())
     }, [dispatch])
 
     const addNewBlog = async (blog) => {
@@ -65,8 +71,10 @@ const App = () => {
 
             {user !== null &&
         <div className='blogs'>
-            <h2>blogs</h2>
+            <h2>Blogs</h2>
             <p>{user.name} logged in <button type="button" onClick={() => dispatch(logout())}>logout</button></p>
+
+            <Users />
 
             <Togglable buttonLabel="new blog" ref={createBlogFormRef}>
                 <CreateBlogForm addNewBlog={addNewBlog}/>

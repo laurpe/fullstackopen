@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setNotification, clearNotification } from '../reducers/notificationReducer'
-import { login } from '../reducers/userReducer'
+import { login } from '../reducers/loginReducer'
 
 
 const LoginForm = () => {
