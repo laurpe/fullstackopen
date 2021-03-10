@@ -112,7 +112,7 @@ test('Like button works', async () => {
     const mockStore = configureStore()
     const store = mockStore(initialState)
 
-    const mockHandler = jest.fn() //tämä pitäisi mockata niin että kierretään dispatch joka heittää errorin?
+    const mockHandler = jest.fn()
 
     const propsForComponent = {
         blog: {
