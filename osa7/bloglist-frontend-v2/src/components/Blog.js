@@ -1,36 +1,23 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
 
-const Blog = ({ blog, user, handleLike, handleRemove }) => {
-    const [blogDetails, setBlogDetails] = useState(false)
+const Blog = ({ user, handleLike, handleRemove }) => {
+    const blogs = useSelector(state => state.blogs)
+    const id = useParams().id
+    const blog = blogs.find(blog => blog.id === id)
 
-    const blogStyle = {
-        paddingTop: 10,
-        paddingBottom: 10,
-        paddingLeft: 5,
-        border: 'solid',
-        borderWidth: 1,
-        marginTop: 2,
+    if (blog === undefined) {
+        return null
     }
-
-
     return (
-        <div style={blogStyle}>
-            {blogDetails === false && (
-                <div>
-                    {blog.title} by {blog.author} <button onClick={() => setBlogDetails(true)}>view</button>
-                </div>
-            )}
-
-            {blogDetails === true && (
-                <div>
-                    {blog.title} by {blog.author} <button onClick={() => setBlogDetails(false)}>hide</button> <br />
-                    {blog.url} <br />
-                    likes: {blog.likes} <button onClick={() => handleLike(blog)}>like</button><br />
-                    added by: {blog.user.name ? blog.user.name : user.name} <br />
-                    {blog.user.name === user.name && <button onClick={() => handleRemove(blog)}>remove</button>}
-                </div>
-            )}
+        <div>
+            <h2>{blog.title}</h2>
+            <a href={`http://${blog.url}`}>{blog.url}</a> <br />
+            likes: {blog.likes} <button onClick={() => handleLike(blog)}>like</button><br />
+            added by: {blog.user.name ? blog.user.name : user.name} <br />
+            {blog.user.name === user.name && <button onClick={() => handleRemove(blog)}>remove</button>}
         </div>
     )
 }

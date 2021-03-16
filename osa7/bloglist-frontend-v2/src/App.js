@@ -81,6 +81,9 @@ const App = () => {
                             <Route path='/users/:id'>
                                 <User />
                             </Route>
+                            <Route path='/blogs/:id'>
+                                <Blog user={user} handleLike={handleLike} handleRemove={handleRemove} />
+                            </Route>
                             <Route path='/'>
                                 <h2>Users</h2>
                                 <table>
@@ -99,18 +102,17 @@ const App = () => {
                                         )}
                                     </tbody>
                                 </table>
+                                <Togglable buttonLabel="new blog" ref={createBlogFormRef}>
+                                    <CreateBlogForm addNewBlog={addNewBlog}/>
+                                </Togglable>
+
+                                <ul className='bloglist'>
+                                    {blogs.map(blog =>
+                                        <li className='blog' key={blog.id}><Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link></li>
+                                    )}
+                                </ul>
                             </Route>
                         </Switch>
-
-                        <Togglable buttonLabel="new blog" ref={createBlogFormRef}>
-                            <CreateBlogForm addNewBlog={addNewBlog}/>
-                        </Togglable>
-
-                        <ul className='bloglist'>
-                            {blogs.sort((a, b) => (b.likes - a.likes)).map(blog =>
-                                <li className='blog' key={blog.id}><Blog blog={blog} user={user} handleLike={handleLike} handleRemove={handleRemove} /></li>
-                            )}
-                        </ul>
                     </div>
                 }
             </div>
