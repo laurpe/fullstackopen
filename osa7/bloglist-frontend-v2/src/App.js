@@ -62,6 +62,10 @@ const App = () => {
         }
     }
 
+    const padding = {
+        padding: 5
+    }
+
     return (
 
         <Router>
@@ -73,46 +77,54 @@ const App = () => {
                 }
 
                 {user !== null &&
-                    <div className='blogs'>
-                        <h2>Blogs</h2>
-                        <p>{user.name} logged in <button type="button" onClick={() => dispatch(logout())}>logout</button></p>
+                    <div>
+                        <div className='navbar'>
+                            <Link style={padding} to='/'>blogs</Link>
+                            <Link style={padding} to='users'>users</Link>
+                            {user.username} logged in <button type="button" onClick={() => dispatch(logout())}>logout</button>
+                        </div>
+                        <div className='blogs'>
+                            <h2>Blog app</h2>
 
-                        <Switch>
-                            <Route path='/users/:id'>
-                                <User />
-                            </Route>
-                            <Route path='/blogs/:id'>
-                                <Blog user={user} handleLike={handleLike} handleRemove={handleRemove} />
-                            </Route>
-                            <Route path='/'>
-                                <h2>Users</h2>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Blogs added</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {users.map(user =>
-                                            <tr key={user.id}>
-                                                <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
-                                                <td>{user.blogs.length}</td>
+                            <Switch>
+                                <Route path='/users/:id'>
+                                    <User />
+                                </Route>
+                                <Route path='/blogs/:id'>
+                                    <Blog user={user} handleLike={handleLike} handleRemove={handleRemove} />
+                                </Route>
+                                <Route path='/users'>
+                                    <h2>Users</h2>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Blogs added</th>
                                             </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                                <Togglable buttonLabel="new blog" ref={createBlogFormRef}>
-                                    <CreateBlogForm addNewBlog={addNewBlog}/>
-                                </Togglable>
+                                        </thead>
+                                        <tbody>
+                                            {users.map(user =>
+                                                <tr key={user.id}>
+                                                    <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
+                                                    <td>{user.blogs.length}</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </Route>
+                                <Route path='/'>
+                                    <Togglable buttonLabel="new blog" ref={createBlogFormRef}>
+                                        <CreateBlogForm addNewBlog={addNewBlog}/>
+                                    </Togglable>
 
-                                <ul className='bloglist'>
-                                    {blogs.map(blog =>
-                                        <li className='blog' key={blog.id}><Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link></li>
-                                    )}
-                                </ul>
-                            </Route>
-                        </Switch>
+                                    <ul className='bloglist'>
+                                        {blogs.map(blog =>
+                                            <li className='blog' key={blog.id}><Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link></li>
+                                        )}
+                                    </ul>
+                                </Route>
+                            </Switch>
+                        </div>
                     </div>
                 }
             </div>

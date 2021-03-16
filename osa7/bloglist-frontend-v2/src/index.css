@@ -36,3 +36,8 @@ li.blog {
   padding: 8px;
   margin: 2px;
 }
+
+.navbar {
+  background-color: lightgrey;
+  padding: 5px;
+}
