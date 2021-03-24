@@ -7,6 +7,8 @@ const api = supertest(app);
 
 const Blog = require("../models/blog");
 const User = require("../models/user");
+const Comment = require("../models/comment");
+
 
 beforeEach(async () => {
   const passwordHash = await bcrypt.hash("salasana", 10);
@@ -27,6 +29,7 @@ beforeEach(async () => {
 afterEach(async () => {
   await User.deleteMany({});
   await Blog.deleteMany({});
+  await Comment.deleteMany({})
 })
 
 afterAll(() => {
@@ -373,3 +376,24 @@ describe("when adding new user to database", () => {
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   })
 });
+describe('when adding comments to a blog', () => {
+  test.only('succesful add returns status code 200 and proper comment content', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+
+    const blogToComment = blogsAtStart[0]
+    console.log('blogin id: ', blogToComment.id)
+    console.log('blog: ', blogToComment)
+    const comment = { content: "kommentti" }
+
+    const result = await api
+      .post(`/api/blogs/${blogToComment.id}/comments`)
+      .send(comment)
+      .expect(200)
+      .expect("Content-Type", /application\/json/)
+
+    expect(result.body.content).toContain("kommentti");
+    expect(result.body.blog).toContain(blogToComment.id);
+    expect(result.body.id).toBeDefined();
+    expect(result.body.id.length).toBeGreaterThan(0);
+  })
+})
