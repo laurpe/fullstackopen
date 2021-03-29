@@ -66,8 +66,6 @@ const App = () => {
         padding: 5
     }
 
-    console.log(blogs)
-
     return (
 
         <Router>
