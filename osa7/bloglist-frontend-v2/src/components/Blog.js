@@ -2,6 +2,11 @@ import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { commentBlog } from '../reducers/blogReducer'
+import Button from './Button'
+import DetailedView from './DetailedView'
+import Form from './Form'
+import FormDiv from './FormDiv'
+import List from './List'
 
 
 const Blog = ({ user, handleLike, handleRemove }) => {
@@ -25,21 +30,30 @@ const Blog = ({ user, handleLike, handleRemove }) => {
     }
     return (
         <div>
-            <h2>{blog.title}</h2>
-            <a href={`http://${blog.url}`}>{blog.url}</a> <br />
-            likes: {blog.likes} <button onClick={() => handleLike(blog)}>like</button><br />
+            <DetailedView>
+                <h2>{blog.title}</h2>
+                <a href={`http://${blog.url}`}>{blog.url}</a> <br />
+            likes: {blog.likes} <Button onClick={() => handleLike(blog)}>like</Button><br />
             added by: {blog.user.name ? blog.user.name : user.name} <br />
-            {blog.user.name === user.name && <button onClick={() => handleRemove(blog)}>remove</button>}
-            <h3>comments</h3>
-            <form onSubmit={addComment}>
-                <input value={comment.content} onChange={(event) => {setComment({ ...commentObject, content: event.target.value })}}/>
-                <button type="submit">add comment</button>
-            </form>
-            <ul>
+                {blog.user.name === user.name && <Button onClick={() => handleRemove(blog)}>remove</Button>}
+            </DetailedView>
+            <h2>Comments</h2>
+            <FormDiv>
+                <Form onSubmit={addComment}>
+                    <div>
+                        comment
+                    </div>
+                    <div>
+                        <input value={comment.content} onChange={(event) => {setComment({ ...commentObject, content: event.target.value })}}/>
+                    </div>
+                    <Button type="submit">add comment</Button>
+                </Form>
+            </FormDiv>
+            <List>
                 {blog.comments.map(comment => (
                     <li key={comment.id}>{comment.content}</li>
                 ))}
-            </ul>
+            </List>
         </div>
     )
 }

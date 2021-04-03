@@ -14,6 +14,10 @@ import { createBlog, likeBlog, removeBlog } from './reducers/blogReducer'
 import { logout } from './reducers/loginReducer'
 import useLogin from './hooks/useLogin'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import Button from './components/Button'
+import Table from './components/Table'
+import Navbar from './components/Navbar'
+import List from './components/List'
 
 
 const App = () => {
@@ -69,7 +73,7 @@ const App = () => {
     return (
 
         <Router>
-            <div>
+            <div className='container'>
                 <Notification />
 
                 {user === null &&
@@ -78,14 +82,13 @@ const App = () => {
 
                 {user !== null &&
                     <div>
-                        <div className='navbar'>
+                        <Navbar>
+                            BlogApp
                             <Link style={padding} to='/'>blogs</Link>
-                            <Link style={padding} to='users'>users</Link>
-                            {user.username} logged in <button type="button" onClick={() => dispatch(logout())}>logout</button>
-                        </div>
+                            <Link style={padding} to='/users'>users</Link>
+                            {user.username} logged in <Button type="button" onClick={() => dispatch(logout())}>logout</Button>
+                        </Navbar>
                         <div className='blogs'>
-                            <h2>Blog app</h2>
-
                             <Switch>
                                 <Route path='/users/:id'>
                                     <User />
@@ -95,7 +98,7 @@ const App = () => {
                                 </Route>
                                 <Route path='/users'>
                                     <h2>Users</h2>
-                                    <table>
+                                    <Table>
                                         <thead>
                                             <tr>
                                                 <th>Name</th>
@@ -110,18 +113,18 @@ const App = () => {
                                                 </tr>
                                             )}
                                         </tbody>
-                                    </table>
+                                    </Table>
                                 </Route>
                                 <Route path='/'>
                                     <Togglable buttonLabel="new blog" ref={createBlogFormRef}>
                                         <CreateBlogForm addNewBlog={addNewBlog}/>
                                     </Togglable>
 
-                                    <ul className='bloglist'>
+                                    <List>
                                         {blogs.map(blog =>
                                             <li className='blog' key={blog.id}><Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link></li>
                                         )}
-                                    </ul>
+                                    </List>
                                 </Route>
                             </Switch>
                         </div>

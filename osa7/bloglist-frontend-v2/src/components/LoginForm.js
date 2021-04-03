@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setNotification, clearNotification } from '../reducers/notificationReducer'
 import { login } from '../reducers/loginReducer'
+import Button from './Button'
+import FormDiv from './FormDiv'
+import Form from './Form'
 
 
 const LoginForm = () => {
@@ -26,18 +29,25 @@ const LoginForm = () => {
 
     return (
         <div>
-            <h2>log in to application</h2>
-            <form onSubmit={handleLogin}>
-                <div>
+            <h1>Blog app</h1>
+            <h2>Log in</h2>
+            <FormDiv>
+                <Form onSubmit={handleLogin}>
+                    <div>
                     username
-                    <input id="username" type="text" value={username} name="Username" onChange={({ target }) => setUsername(target.value)} />
-                </div>
-                <div>
+                    </div>
+                    <div>
+                        <input id="username" type="text" value={username} name="Username" onChange={({ target }) => setUsername(target.value)} />
+                    </div>
+                    <div>
                     password
-                    <input id="password" type="password" value={password} name="Password" onChange={({ target }) => setPassword(target.value)} />
-                </div>
-                <button id="login-button" type="submit">login</button>
-            </form>
+                    </div>
+                    <div>
+                        <input id="password" type="password" value={password} name="Password" onChange={({ target }) => setPassword(target.value)} />
+                    </div>
+                    <Button id="login-button" type="submit">login</Button>
+                </Form>
+            </FormDiv>
         </div>
     )
 }
