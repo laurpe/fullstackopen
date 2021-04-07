@@ -1,0 +1,16 @@
+{
+  "name": "library-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Laura Perttilä",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.22.2",
+    "graphql": "^15.5.0"
+  }
+}
