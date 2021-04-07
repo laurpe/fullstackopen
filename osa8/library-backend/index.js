@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, RenameRootFields } = require('apollo-server')
 
 let authors = [
     {
@@ -87,13 +87,21 @@ const typeDefs = gql`
   type Query {
       bookCount: Int!
       authorCount: Int!
+      allBooks: [Book!]!
+  }
+  type Book {
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]!
   }
 `
 
 const resolvers = {
     Query: {
         bookCount: () => books.length,
-        authorCount: () => authors.length
+        authorCount: () => authors.length,
+        allBooks: () => books
     }
 }
 
