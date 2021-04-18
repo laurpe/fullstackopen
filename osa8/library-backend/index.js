@@ -1,5 +1,7 @@
 const { ApolloServer, gql, RenameRootFields } = require('apollo-server')
 
+const { v1: uuid } = require('uuid')
+
 let authors = [
     {
         name: 'Robert Martin',
@@ -99,7 +101,16 @@ const typeDefs = gql`
   }
   type Author {
       name: String!
+      born: Int
       bookCount: Int!
+  }
+  type Mutation {
+    addBook(
+        title: String!
+        author: String!
+        published: Int!
+        genres: [String!]
+    ): Book
   }
 `
 
@@ -125,6 +136,20 @@ const resolvers = {
         bookCount: (root) => {
             const count = books.filter(book => book.author === root.name)
             return count.length
+        }
+    },
+    Mutation: {
+        addBook: (root, args) => {
+            const book = { ...args, id: uuid() }
+            books = books.concat(book)
+
+            if (!authors.includes(args.author)) {
+                const author = { name: args.author, id: uuid() }
+                authors = authors.concat(author)
+                return book
+            }
+
+            return book
         }
     }
 }
