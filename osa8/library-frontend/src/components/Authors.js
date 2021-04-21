@@ -11,10 +11,6 @@ const Authors = (props) => {
         refetchQueries: [{ query: ALL_AUTHORS }]
     })
 
-    if (!props.show) {
-        return null
-    }
-
     const result = useQuery(ALL_AUTHORS)
 
     if (result.loading) {
@@ -26,28 +22,34 @@ const Authors = (props) => {
     const handleSubmit = async (event) => {
         event.preventDefault()
 
-        setBirthyear({ variables: { name: authorName, setBornTo: born } })
+        await setBirthyear({ variables: { name: authorName, setBornTo: born } })
 
         setAuthorName('')
         setBorn('')
+    }
+
+    if (!props.show) {
+        return null
     }
 
     return (
         <div>
             <h2>authors</h2>
             <table>
-                <tbody>
-                    <tr>
-                        <th></th>
-                        <th>
+                <thead><tr>
+                    <th></th>
+                    <th>
                         born
-                        </th>
-                        <th>
+                    </th>
+                    <th>
                         books
-                        </th>
-                    </tr>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+
                     {authors.map(a =>
-                        <tr key={a.name}>
+                        <tr key={a.id}>
                             <td>{a.name}</td>
                             <td>{a.born}</td>
                             <td>{a.bookCount}</td>
@@ -58,7 +60,9 @@ const Authors = (props) => {
             <h3>set birthyear</h3>
             <form onSubmit={handleSubmit}>
                 <div>name:
-                    <input type="text" value={authorName} onChange={({ target }) => setAuthorName(target.value)} />
+                    <select value={authorName} onChange={({ target }) => setAuthorName(target.value)}>
+                        {authors.map(author => <option key={author.id} value={author.name}>{author.name}</option>)}
+                    </select>
                 </div>
                 <div>born:
                     <input type="number" value={born} onChange={({ target }) => setBorn(parseInt(target.value))} />
