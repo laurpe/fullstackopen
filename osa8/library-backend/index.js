@@ -1,6 +1,19 @@
-const { ApolloServer, gql, RenameRootFields } = require('apollo-server')
+require('dotenv').config()
+const { ApolloServer, gql } = require('apollo-server')
+const mongoose = require('mongoose')
+const Book = require('./models/book')
+const Author = require('./models/author')
 
-const { v1: uuid } = require('uuid')
+const url = process.env.MONGODB_URI
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+    .then(() => {
+        console.log('connected to MongoDB')
+    })
+    .catch((error) => {
+        console.log('error connection to MongoDB:', error.message)
+    })
+
 
 let authors = [
     {
@@ -95,7 +108,7 @@ const typeDefs = gql`
   type Book {
       title: String!
       published: Int!
-      author: String!
+      author: Author!
       id: ID!
       genres: [String!]!
   }
@@ -121,50 +134,62 @@ const typeDefs = gql`
 
 const resolvers = {
     Query: {
-        bookCount: () => books.length,
-        authorCount: () => authors.length,
-        allBooks: (root, args) => {
+        bookCount: () => Book.collection.countDocuments(),
+        authorCount: () => Author.collection.countDocuments(),
+        allBooks: async (root, args) => {
             if (args.author && args.genre) {
-                return books.filter(book => book.genres.includes(args.genre) && book.author === args.author)
+                const author = await Author.findOne({ name: args.author })
+
+                const books = await Book.find({ $and: [{ genres: { $in: [args.genre] }, author: author }] })
+                return books
             }
             if (args.author) {
-                return books.filter(book => book.author === args.author)
+                const author = await Author.findOne({ name: args.author })
+
+                const books = await Book.find({ author: author })
+                return books
             }
             if (args.genre) {
-                return books.filter(book => book.genres.includes(args.genre))
+                const books = await Book.find({ genres: { $in: [args.genre] } })
+                return books
             }
-            return books
+            return Book.find({})
         },
-        allAuthors: () => authors
+        allAuthors: () => Author.find({})
     },
     Author: {
-        bookCount: (root) => {
-            const count = books.filter(book => book.author === root.name)
-            return count.length
+        bookCount: async (root) => {
+            const authorsBooks = await Book.find({ author: root.id })
+
+            return authorsBooks.length
         }
     },
     Mutation: {
-        addBook: (root, args) => {
-            const book = { ...args, id: uuid() }
-            books = books.concat(book)
+        addBook: async (root, args) => {
+            const author = await Author.findOne({ name: args.author })
 
-            if (!authors.includes(args.author)) {
-                const author = { name: args.author, id: uuid() }
-                authors = authors.concat(author)
-                return book
+            if (!author) {
+                const newAuthor = new Author({ name: args.author })
+                const savedAuthor = await newAuthor.save()
+
+                const book = new Book({ ...args, author: savedAuthor })
+
+                return book.save()
             }
+            const book = new Book({ ...args, author: author })
 
-            return book
+            return book.save()
         },
-        editAuthor: (root, args) => {
-            const author = authors.find(author => author.name === args.name)
+        editAuthor: async (root, args) => {
+            const author = await Author.findOne({ name: args.name })
+
             if (!author) {
                 return null
             }
 
-            const updatedAuthor = { ...author, born: args.setBornTo }
-            authors = authors.map(author => author.name === args.name ? updatedAuthor : author)
-            return updatedAuthor
+            author.born = args.setBornTo
+
+            return author.save()
         }
     }
 }
