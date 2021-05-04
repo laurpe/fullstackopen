@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, UserInputError } = require('apollo-server')
 const mongoose = require('mongoose')
 const Book = require('./models/book')
 const Author = require('./models/author')
@@ -104,6 +104,7 @@ const typeDefs = gql`
       authorCount: Int!
       allBooks(author: String, genre: String): [Book!]!
       allAuthors: [Author!]!
+      me: User
   }
   type Book {
       title: String!
@@ -118,6 +119,14 @@ const typeDefs = gql`
       bookCount: Int!
       id: ID!
   }
+  type User {
+      username: String!
+      favoriteGenre: String!
+      id: ID!
+  }
+  type Token {
+      value: String!
+  }
   type Mutation {
     addBook(
         title: String!
@@ -129,6 +138,14 @@ const typeDefs = gql`
         name: String!
         setBornTo: Int!
     ): Author
+    createUser(
+        username: String!
+        favoriteGenre: String!
+    ): User
+    login(
+        username: String!
+        password: String
+    ): Token
   }
 `
 
@@ -170,15 +187,36 @@ const resolvers = {
 
             if (!author) {
                 const newAuthor = new Author({ name: args.author })
-                const savedAuthor = await newAuthor.save()
 
-                const book = new Book({ ...args, author: savedAuthor })
+                try {
+                    await newAuthor.save()
+                } catch (error) {
+                    throw new UserInputError(error.message, {
+                        invalidArgs: args
+                    })
+                }
 
-                return book.save()
+                const book = new Book({ ...args, author: newAuthor })
+
+                try {
+                    await book.save()
+                } catch (error) {
+                    throw new UserInputError(error.message, {
+                        invalidArgs: args
+                    })
+                }
+                return book
             }
             const book = new Book({ ...args, author: author })
 
-            return book.save()
+            try {
+                await book.save()
+            } catch (error) {
+                throw new UserInputError(error.message, {
+                    invalidArgs: args
+                })
+            }
+            return book
         },
         editAuthor: async (root, args) => {
             const author = await Author.findOne({ name: args.name })
@@ -189,7 +227,15 @@ const resolvers = {
 
             author.born = args.setBornTo
 
-            return author.save()
+            try {
+                await author.save()
+            } catch (error) {
+                throw new UserInputError(error.message, {
+                    invalidArgs: args
+                })
+            }
+
+            return author
         }
     }
 }
