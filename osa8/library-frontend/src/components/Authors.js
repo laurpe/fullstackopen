@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import { ALL_AUTHORS, SET_BIRTHYEAR } from '../queries'
 
 
-const Authors = (props) => {
+const Authors = ({ token }) => {
     const [authorName, setAuthorName] = useState('')
     const [born, setBorn] = useState('')
 
@@ -26,10 +26,6 @@ const Authors = (props) => {
 
         setAuthorName('')
         setBorn('')
-    }
-
-    if (!props.show) {
-        return null
     }
 
     return (
@@ -57,18 +53,23 @@ const Authors = (props) => {
                     )}
                 </tbody>
             </table>
-            <h3>set birthyear</h3>
-            <form onSubmit={handleSubmit}>
-                <div>name:
-                    <select value={authorName} onChange={({ target }) => setAuthorName(target.value)}>
-                        {authors.map(author => <option key={author.id} value={author.name}>{author.name}</option>)}
-                    </select>
-                </div>
-                <div>born:
-                    <input type="number" value={born} onChange={({ target }) => setBorn(parseInt(target.value))} />
-                </div>
-                <button type="submit">update author</button>
-            </form>
+            {token !== null &&
+            <div>
+                <h3>set birthyear</h3>
+                <form onSubmit={handleSubmit}>
+                    <div>name:
+                        <select value={authorName} onChange={({ target }) => setAuthorName(target.value)}>
+                            <option>select</option>
+                            {authors.map(author => <option key={author.id} value={author.name}>{author.name}</option>)}
+                        </select>
+                    </div>
+                    <div>born:
+                        <input type="number" value={born} onChange={({ target }) => setBorn(parseInt(target.value))} />
+                    </div>
+                    <button type="submit">update author</button>
+                </form>
+            </div>
+            }
         </div>
     )
 }
