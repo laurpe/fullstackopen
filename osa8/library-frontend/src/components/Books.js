@@ -1,21 +1,44 @@
-import React from 'react'
-import { useQuery } from '@apollo/client'
+import React, { useEffect, useState } from 'react'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import { ALL_BOOKS } from '../queries'
 
 const Books = () => {
+    const [getGenre, result] = useLazyQuery(ALL_BOOKS)
+    const [booksByGenre, setBooksByGenre] = useState(null)
+    const [genreToShow, setGenreToShow] = useState('')
 
-    const result = useQuery(ALL_BOOKS)
+    const showAll = () => {
+        setBooksByGenre(null)
+        setGenreToShow('')
+    }
 
-    if (result.loading) {
+    const showGenre = (genre) => {
+        getGenre({ variables: { genre: genre } })
+        setGenreToShow(genre)
+    }
+
+    useEffect(() => {
+        if (result.data) {
+            setBooksByGenre(result.data.allBooks)
+        }
+    }, [result])
+
+    const allBooks = useQuery(ALL_BOOKS)
+
+    if (allBooks.loading) {
         return <div>loading</div>
     }
 
-    const books = result.data.allBooks
+    const books = allBooks.data.allBooks
+
+    const genres = [... new Set(books.map(book => book.genres).flat())]
 
     return (
         <div>
             <h2>books</h2>
-
+            {booksByGenre &&
+                    <p>in genre { genreToShow }</p>
+            }
             <table>
                 <tbody>
                     <tr>
@@ -27,7 +50,16 @@ const Books = () => {
               published
                         </th>
                     </tr>
-                    {books.map(a =>
+                    {booksByGenre &&
+                    booksByGenre.map(a =>
+                        <tr key={a.title}>
+                            <td>{a.title}</td>
+                            <td>{a.author.name}</td>
+                            <td>{a.published}</td>
+                        </tr>
+                    )}
+                    {!booksByGenre &&
+                    books.map(a =>
                         <tr key={a.title}>
                             <td>{a.title}</td>
                             <td>{a.author.name}</td>
@@ -36,6 +68,10 @@ const Books = () => {
                     )}
                 </tbody>
             </table>
+            <div>
+                {genres.map(genre => <button key={genre} onClick={() => showGenre(genre)}>{genre}</button>)}
+                <button onClick={() => showAll()}>all</button>
+            </div>
         </div>
     )
 }

@@ -15,16 +15,12 @@ const Login = ({ setToken }) => {
             setToken(token)
             localStorage.setItem('user-token', token)
         }
-        console.log('result data: ', result.data)
     }, [result.data])
 
     const submit = (event) => {
         event.preventDefault()
 
         login({ variables: { username: username, password: password } })
-
-        // setUsername('')
-        // setPassword('')
     }
 
     return (
