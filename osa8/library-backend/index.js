@@ -1,10 +1,12 @@
 require('dotenv').config()
-const { ApolloServer, gql, UserInputError, AuthenticationError } = require('apollo-server')
+const { ApolloServer, gql, UserInputError, AuthenticationError, PubSub } = require('apollo-server')
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const Book = require('./models/book')
 const Author = require('./models/author')
 const User = require('./models/user')
+
+const pubsub = new PubSub()
 
 const JWT_SECRET = 'SECRET'
 
@@ -15,7 +17,7 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFind
         console.log('connected to MongoDB')
     })
     .catch((error) => {
-        console.log('error connection to MongoDB:', error.message)
+        console.log('error connecting to MongoDB:', error.message)
     })
 
 
@@ -153,6 +155,9 @@ const typeDefs = gql`
         password: String
     ): Token
   }
+  type Subscription {
+      bookAdded: Book!
+  }
 `
 
 const resolvers = {
@@ -222,12 +227,16 @@ const resolvers = {
             const book = new Book({ ...args, author: author })
 
             try {
-                return await book.save()
+                await book.save()
             } catch (error) {
                 throw new UserInputError(error.message, {
                     invalidArgs: args
                 })
             }
+
+            pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
+            return book
         },
         editAuthor: async (root, args, context) => {
             if (!context.currentUser) {
@@ -275,6 +284,11 @@ const resolvers = {
 
             return { value: jwt.sign(userForToken, JWT_SECRET) }
         }
+    },
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+        }
     }
 }
 
@@ -289,13 +303,13 @@ const server = new ApolloServer({
                 auth.substring(7), JWT_SECRET
             )
             const currentUser = await User.findById(decodedToken.id)
-            console.log(currentUser)
 
             return { currentUser }
         }
     }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
     console.log(`Server ready at ${url}`)
+    console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })
