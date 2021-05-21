@@ -201,29 +201,20 @@ const resolvers = {
                 throw new AuthenticationError("Invalid token")
             }
 
-            const author = await Author.findOne({ name: args.author })
+            let author = await Author.findOne({ name: args.author })
 
             if (!author) {
                 const newAuthor = new Author({ name: args.author })
 
                 try {
-                    await newAuthor.save()
-                } catch (error) {
-                    throw new UserInputError(error.message, {
-                        invalidArgs: args
-                    })
-                }
-
-                const book = new Book({ ...args, author: newAuthor })
-
-                try {
-                    return await book.save()
+                    author = await newAuthor.save()
                 } catch (error) {
                     throw new UserInputError(error.message, {
                         invalidArgs: args
                     })
                 }
             }
+
             const book = new Book({ ...args, author: author })
 
             try {
