@@ -5,7 +5,7 @@ import NewBook from './components/NewBook'
 import Login from './components/Login'
 import Recommendations from './components/Recommendations'
 import { useApolloClient, useSubscription } from '@apollo/client'
-import { BOOK_ADDED } from './queries'
+import { ALL_BOOKS, BOOK_ADDED } from './queries'
 
 
 const App = () => {
@@ -26,9 +26,24 @@ const App = () => {
         }
     }, [])
 
+    const updateCacheWith = async (addedBook) => {
+        const includedIn = (set, object) => set.map(b => b.id).includes(object.id)
+
+        const dataInStore = client.readQuery({ query: ALL_BOOKS })
+
+        if (!includedIn(dataInStore.allBooks, addedBook)) {
+            client.writeQuery({
+                query: ALL_BOOKS,
+                data: { allBooks : [...dataInStore.allBooks, addedBook] }
+            })
+        }
+    }
+
     useSubscription(BOOK_ADDED, {
         onSubscriptionData: ({ subscriptionData }) => {
-            window.alert(`New book titled ${subscriptionData.data.bookAdded.title} added`)
+            const addedBook = subscriptionData.data.bookAdded
+            window.alert(`New book titled ${addedBook.title} added`)
+            updateCacheWith(addedBook)
         }
     })
 
@@ -56,7 +71,7 @@ const App = () => {
             <Books />
             }
             {page === 'add' && token !== null &&
-            <NewBook />
+            <NewBook updateCacheWith={updateCacheWith} />
             }
             {page === 'recommendations' && token !== null &&
             <Recommendations />
