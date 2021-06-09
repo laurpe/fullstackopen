@@ -11,6 +11,7 @@
   "author": "Laura P",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^15.12.2",
     "ts-node": "^10.0.0",
     "typescript": "^4.3.2"
   },

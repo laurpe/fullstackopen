@@ -1,3 +1,4 @@
+
 const calculateBmi = (height: number, weight: number) => {
     if (height <= 0 || weight <= 0) {
         throw new Error('Height or weight cannot be 0 or under');
@@ -33,8 +34,11 @@ const calculateBmi = (height: number, weight: number) => {
     return result;
 };
 
+const height = Number(process.argv[2]);
+const weight = Number(process.argv[3]);
+
 try {
-    console.log(calculateBmi(180, 74));
+    console.log(calculateBmi(height, weight));
 } catch (error) {
     console.log('Error message: ', error.message);
 }

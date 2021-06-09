@@ -1,5 +1,4 @@
 
-const exerciseHours = [3, 0, 2, 4.5, 0, 3, 1];
 
 interface ExerciseSummary {
     periodLength: number,
@@ -11,10 +10,36 @@ interface ExerciseSummary {
     average: number
 }
 
-const exerciseCalculator = (hoursPerDay: Array<number>, target: number): ExerciseSummary => {
-    if (hoursPerDay.length !== 7) {
-        throw new Error('You must give exercise hours for every day of the week!');
+interface hoursAndTarget {
+    hours: Array<number>,
+    target: number
+}
+
+const parseArguments = (args: Array<string>): hoursAndTarget => {
+    if (args.length < 4) {
+        throw new Error('Not enough arguments!');
     }
+
+    const hoursAndTarget: Array<number> = process.argv.slice(2).map(item => {
+        if (!isNaN(Number(item))) {
+            return Number(item);
+        } else {
+            throw new Error('Provided values were not numbers!');
+        }
+    });
+
+    const hours: Array<number> = hoursAndTarget.slice(1);
+
+    const target: number = hoursAndTarget[0];
+
+    return {
+        hours: hours,
+        target: target
+    };
+};
+
+
+const exerciseCalculator = (hoursPerDay: Array<number>, target: number): ExerciseSummary => {
 
     const actualHoursPerDay = hoursPerDay.filter(h => h > 0);
 
@@ -72,7 +97,8 @@ const exerciseCalculator = (hoursPerDay: Array<number>, target: number): Exercis
 };
 
 try {
-    console.log(exerciseCalculator(exerciseHours, 2));
+    const { hours, target } = parseArguments(process.argv);
+    console.log(exerciseCalculator(hours, target));
 } catch (error) {
     console.log('Error: ', error.message);
 }
