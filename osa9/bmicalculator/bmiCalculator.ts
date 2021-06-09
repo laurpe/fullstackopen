@@ -4,7 +4,7 @@ const calculateBmi = (height: number, weight: number) => {
     }
 
     if (height < 3) {
-        throw new Error('Give height in centimeters')
+        throw new Error('Give height in centimeters');
     }
     const heightInMeters = height / 100;
 
@@ -31,7 +31,7 @@ const calculateBmi = (height: number, weight: number) => {
     }
 
     return result;
-}
+};
 
 try {
     console.log(calculateBmi(180, 74));
