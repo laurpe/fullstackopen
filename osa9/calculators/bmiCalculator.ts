@@ -1,4 +1,9 @@
 
+interface HeightAndWeight {
+    height: number,
+    weight: number
+}
+
 const calculateBmi = (height: number, weight: number) => {
     if (height <= 0 || weight <= 0) {
         throw new Error('Height or weight cannot be 0 or under');
@@ -34,10 +39,27 @@ const calculateBmi = (height: number, weight: number) => {
     return result;
 };
 
-const height = Number(process.argv[2]);
-const weight = Number(process.argv[3]);
+const checkInput = (args: Array<string>): HeightAndWeight => {
+    if (args.length < 4) {
+        throw new Error('Not enough arguments!');
+    }
+    if (args.length > 4) {
+        throw new Error('Too many arguments!');
+    }
+
+    if (!isNaN(Number(args[2])) || !isNaN(Number(args[3]))) {
+        return {
+            height: Number(args[2]),
+            weight: Number(args[3])
+        };
+    } else {
+        throw new Error('Provided values were not numbers!');
+    }
+};
+
 
 try {
+    const { height, weight } = checkInput(process.argv);
     console.log(calculateBmi(height, weight));
 } catch (error) {
     console.log('Error message: ', error.message);

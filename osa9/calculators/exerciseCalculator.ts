@@ -61,24 +61,24 @@ const exerciseCalculator = (hoursPerDay: Array<number>, target: number): Exercis
     const rating = (target: number, average: number): number => {
         if (average > target) {
             return 3;
-        }
-        if (average === target) {
+        } else if (average === target) {
             return 2;
-        }
-        if (average < target) {
+        } else if (average < target) {
             return 1;
+        } else {
+            throw new Error('Value of target or average incorrect');
         }
     };
 
     const ratingText = (rating: number): string => {
         if (rating === 3) {
             return 'good';
-        }
-        if (rating === 2) {
+        } else if (rating === 2) {
             return 'ok';
-        }
-        if (rating === 1) {
+        } else if (rating === 1) {
             return 'bad';
+        } else {
+            throw new Error('Value of rating incorrect');
         }
     };
 
