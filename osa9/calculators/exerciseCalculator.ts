@@ -99,5 +99,9 @@ try {
     const { hours, target } = parseArguments(process.argv);
     console.log(exerciseCalculator(hours, target));
 } catch (error) {
-    console.log('Error: ', error.message);
+    if (error instanceof Error) {
+        console.log('Error: ', error.message);
+    } else {
+        throw error;
+    }
 }

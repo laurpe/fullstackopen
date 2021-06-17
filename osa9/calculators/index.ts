@@ -29,7 +29,11 @@ app.get('/bmi', (req, res) => {
         const bmi = calculateBmi(height, weight);
         res.status(200).send(JSON.stringify(bmi));
     } catch (error) {
-        res.status(400).send({ error: error.message });
+        if (error instanceof Error) {
+            res.status(400).send({ error: error.message });
+        } else {
+            throw error;
+        }
     }
 });
 
