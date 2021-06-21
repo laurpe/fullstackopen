@@ -13,7 +13,9 @@
   "author": "Laura P",
   "license": "ISC",
   "devDependencies": {
+    "@types/cors": "^2.8.10",
     "@types/express": "^4.17.12",
+    "@types/node": "^15.12.4",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
     "eslint": "^7.28.0",
@@ -21,6 +23,7 @@
     "typescript": "^4.3.3"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1"
   }
 }
