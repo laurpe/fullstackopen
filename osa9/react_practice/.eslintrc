@@ -18,6 +18,36 @@
     },
     "rules": {
       "@typescript-eslint/explicit-function-return-type": 0,
-      "@typescript-eslint/explicit-module-boundary-types": 0
+      "@typescript-eslint/explicit-module-boundary-types": 0,
+      "indent": "off",
+      "@typescript-eslint/indent": [
+          "error",
+          4
+      ],
+      "linebreak-style": [
+          "error",
+          "unix"
+      ],
+      "quotes": [
+          "error",
+          "single"
+      ],
+      "arrow-spacing": [
+          "error",
+          {
+              "before": true,
+              "after": true
+          }
+      ],
+      "no-console": 0,
+      "no-trailing-spaces": "error",
+      "object-curly-spacing": [
+          "error",
+          "always"
+      ],
+      "semi": "off",
+      "@typescript-eslint/semi": [
+          "error"
+      ]
     }
   }

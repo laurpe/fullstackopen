@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 
 interface CoursePart {
@@ -6,15 +6,17 @@ interface CoursePart {
     exerciseCount: number
 }
 
-const Total = ({parts}: {parts: CoursePart[]}) => {
+const Total = ({ parts }: {parts: CoursePart[]}) => {
     const sum = parts.reduce((accumulator, current) => {
-        return accumulator + current.exerciseCount
-    }, 0)
+        return accumulator + current.exerciseCount;
+    }, 0);
 
     return (
-        <div>Number of exercises: {sum}</div>
-    )
-}
+        <div>
+            <p>Number of exercises {sum}</p>
+        </div>
+    );
+};
 
 
-export default Total
+export default Total;
