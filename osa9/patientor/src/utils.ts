@@ -50,8 +50,21 @@ const parseOccupation = (occupation: unknown): string => {
     return occupation;
 };
 
-const parseEntries = (): Entry[] => {
-    return [];
+const parseEntries = (entries: unknown): Entry[] => {
+    if (entries && Array.isArray(entries)) {
+        const entriesWrongType = entries.filter((entry) => {
+            if (entry.type !== "HealthCheck" || entry.type !== "OccupationalHealthcare" || entry.type !== "Hospital") {
+                return true;
+            }
+            return false;
+        });
+
+        if (entriesWrongType.length === 0) {
+            return entries as Entry[];
+        }
+    }
+
+    throw new Error('incorrect or missing entries');
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -62,7 +75,7 @@ const toNewPatient = (object: any): NewPatient => {
         ssn: parseSsn(object.ssn),
         gender: parseGender(object.gender),
         occupation: parseOccupation(object.occupation),
-        entries: parseEntries()
+        entries: parseEntries(object.entries)
     };
 
     return newPatient;
