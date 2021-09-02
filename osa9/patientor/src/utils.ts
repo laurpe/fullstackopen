@@ -177,23 +177,15 @@ const parseEmployerName = (employerName: unknown): string => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isSickLeave = (object: any): object is SickLeave => {
-    if (object === undefined) {
-        return true;
-    }
-    if (object && object['startDate'] && object['endDate'] && isString(object['startDate']) && isString(object['endDate'])) {
-        return true;
-    }
-    
-    return false;
-};
-
-const parseSickLeave = (sickLeave: unknown): SickLeave | undefined => {
-    if (!isSickLeave(sickLeave)) {
+const parseSickLeave = (sickLeave: any): SickLeave | undefined => {
+    if (sickLeave['startDate'] || sickLeave['endDate']) {
+        if (isDate(sickLeave['startDate']) && isDate(sickLeave['endDate'])) {
+            return sickLeave as SickLeave;
+        }
         throw new Error('incorrect sick leave values');
     }
 
-    return sickLeave;
+    return undefined;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
